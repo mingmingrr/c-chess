@@ -4,6 +4,7 @@
 #define chess_sgn(x) ((0 < x) - (x < 0))
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "word.h"
 
@@ -124,7 +125,12 @@ typedef union chess_Castle {
 		Uint8 whiteLong  : 1;
 		Uint8 blackShort : 1;
 		Uint8 blackLong  : 1;
-		Uint8 _pad : 4;
+		Uint8 _pad1 : 4;
+	};
+	struct {
+		Uint8 whiteAll : 2;
+		Uint8 blackAll : 2;
+		Uint8 _pad2 : 4;
 	};
 } chess_Castle;
 
@@ -137,6 +143,9 @@ enum {
 	chess_Bits_Diag2 = 0x0102040810204080,
 };
 
+#define chess_Bits_FileN(n) (chess_Bits_File << n)
+#define chess_Bits_RankN(n) (chess_Bits_Rank << (4 * n))
+
 typedef union chess_Posn {
 	Uint8 all;
 	struct {
@@ -145,6 +154,8 @@ typedef union chess_Posn {
 		Uint8 _pad : 2;
 	};
 } chess_Posn;
+
+#define chess_Posn_make(rank, file) ((rank << 3) | file)
 
 typedef struct chess_Board {
 	chess_Piece  board[64];
@@ -167,14 +178,15 @@ typedef union chess_Move {
 typedef enum chess_MoveTypeT {
 	chess_MoveType_Normal    = 0,
 	chess_MoveType_Promotion = 1,
-	chess_MoveType_Enpassant = 2,
+	chess_MoveType_EnPassant = 2,
 	chess_MoveType_Castling  = 3
 } chess_MoveTypeT;
 
 typedef struct chess_State {
-	chess_Move move;
+	chess_Move   move;
 	chess_Castle castle;
-	chess_Posn enPassant;
+	chess_Posn   enPassant;
+	chess_Piece  capture;
 } chess_State;
 
 char chess_pieceChars[] = "-PNBRQK";
@@ -211,9 +223,10 @@ void chess_print(chess_Board* board) {
 chess_Move chess_scan() {
 	chess_Move move = (chess_Move) {.all = 0};
 	chess_Posn posn = (chess_Posn) {.all = 0};
-	char buffer[6];
+	char buffer[8];
 	printf("Enter a move (Smith) > ");
-	fgets(buffer, sizeof(buffer), stdin);
+	if(!fgets(buffer, sizeof(buffer), stdin))
+		exit(0);
 	posn.file = buffer[0] - 'a';
 	posn.rank = buffer[1] - '1';
 	move.src = posn.all;
@@ -221,8 +234,8 @@ chess_Move chess_scan() {
 	posn.rank = buffer[3] - '1';
 	move.dst = posn.all;
 	switch(buffer[4]) {
-		case 0   : move.type = chess_MoveType_Normal; break;
-		case 'e' : case 'E' : move.type = chess_MoveType_Enpassant; break;
+		case '\n' : case '\0' : move.type = chess_MoveType_Normal; break;
+		case 'e' : case 'E' : move.type = chess_MoveType_EnPassant; break;
 		case 'c' : case 'C' : move.type = chess_MoveType_Castling; break;
 		default:
 			move.type = chess_MoveType_Promotion;
@@ -236,13 +249,74 @@ chess_Move chess_scan() {
 	return move;
 }
 
+void chess_move_normal(chess_Board* board, chess_Move move) {
+	chess_Posn src; src.all = move.src;
+	chess_Posn dst; dst.all = move.dst;
+	switch(chess_abs(board->board[dst.all])) {
+		case chess_Piece_Pawn:
+			if((dst.rank - src.rank) * board->color == 2)
+				board->enPassant.all = dst.all;
+			break;
+		case chess_Piece_Rook:
+			switch(src.all) {
+				case chess_Posn_make(0, 0): board->castle.whiteLong  = 0; break;
+				case chess_Posn_make(0, 7): board->castle.whiteShort = 0; break;
+				case chess_Posn_make(7, 0): board->castle.blackLong  = 0; break;
+				case chess_Posn_make(7, 7): board->castle.blackShort = 0; break;
+			}
+			break;
+		case chess_Piece_King:
+			if(board->color == chess_Color_White)
+				board->castle.whiteAll = 0;
+			else
+				board->castle.blackAll = 0;
+			break;
+	}
+}
+
+void chess_move_castle(chess_Board* board, chess_Move move) {
+	chess_Posn dst; dst.all = move.dst;
+	printf("target : %d\n", chess_Posn_make(dst.rank, 5));
+	printf("source : %d\n", chess_Posn_make(dst.rank, 7));
+	if(dst.file == 6) { // castle short
+		board->board[chess_Posn_make(dst.rank, 5)] = chess_Piece_Rook;
+		board->board[chess_Posn_make(dst.rank, 7)] = chess_Piece_Empty;
+	} else { // castle long
+		board->board[chess_Posn_make(dst.rank, 3)] = chess_Promotion_Rook;
+		board->board[chess_Posn_make(dst.rank, 0)] = chess_Piece_Empty;
+	}
+	if(board->color == chess_Color_White)
+		board->castle.whiteAll = 0;
+	else
+		board->castle.blackAll = 0;
+}
+
 void chess_move(chess_Board* board, chess_Move move, chess_State* state) {
 	state->castle = board->castle;
 	state->enPassant = board->enPassant;
 	state->move.all = move.all;
+	state->capture = board->board[move.dst];
+	chess_Posn src; src.all = move.src;
+	chess_Posn dst; dst.all = move.dst;
+	board->board[dst.all] = board->board[src.all];
+	board->board[src.all] = chess_Piece_Empty;
+	board->enPassant.all = 0;
+	switch(move.type) {
+		case chess_MoveType_Normal:
+			chess_move_normal(board, move);
+			break;
+		case chess_MoveType_Promotion:
+			board->board[move.dst] = chess_Piece_Queen;
+			break;
+		case chess_MoveType_Castling:
+			chess_move_castle(board, move);
+			break;
+		case chess_MoveType_EnPassant:
+			state->capture = chess_Piece_Pawn;
+			board->board[move.dst - board->color * 8] = chess_Piece_Empty;
+			break;
+	}
 	board->color = -board->color;
-	board->board[move.dst] = board->board[move.src];
-	board->board[move.src] = chess_Piece_Empty;
 }
 
 void chess_Board_init(chess_Board* board) {

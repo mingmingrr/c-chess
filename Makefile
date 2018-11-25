@@ -4,8 +4,12 @@ obj = $(src:src/%.c=obj/%.o)
 flags = -Og -g -Isrc
 
 .PHONY: all
-all: $(obj)
-	gcc -o a.out $(flags) $^
+all: a.out
+
+a.out: $(obj)
+	gcc $(flags) -o $@ $^
 
 $(obj): obj/%.o: src/%.c
 	gcc -c $(flags) -o $@ $<
+
+
