@@ -7,7 +7,6 @@ chess_Move chess_Move_scan() {
 	chess_Move move = (chess_Move) {.all = 0};
 	chess_Square square = (chess_Square) {.all = 0};
 	char buffer[8];
-	printf("Enter a move (Smith) > ");
 	if(!fgets(buffer, sizeof(buffer), stdin) || buffer[0] == '-')
 		exit(0);
 	square.file = buffer[0] - 'a';

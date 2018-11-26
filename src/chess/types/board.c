@@ -32,8 +32,11 @@ void chess_Board_print(chess_Board* board) {
 			chess_Piece piece = board->board[square.all];
 			printf("| "); chess_Piece_print(piece); putchar(' ');
 		}
-		printf("|\n+---+---+---+---+---+---+---+---+\n");
+		printf("| %d\n+---+---+---+---+---+---+---+---+\n", rank);
 	}
+	for(char file = 'A'; file <= 'H'; ++file)
+		printf("  %c ", file);
+	putchar('\n');
 	switch(board->color) {
 		case chess_Color_Black:
 			printf("Black to move  ");
