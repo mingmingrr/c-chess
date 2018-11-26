@@ -9,8 +9,6 @@
 	Node* Namespace##negamax_root( \
 		Node* node, \
 		unsigned depth, \
-		Value alpha, \
-		Value beta, \
 		signed color \
 	); \
 	Value Namespace##negamax_node( \
@@ -36,13 +34,13 @@
 	Node* Namespace##negamax_root( \
 		Node* node, \
 		unsigned depth, \
-		Value alpha, \
-		Value beta, \
 		signed color \
 	) { \
 		if(depth-- == 0 || Terminal(node)) \
 			return (Node*)0; \
 		MoveBuffer(child); \
+		Value alpha = (ValueMin) * color; \
+		Value beta = -(ValueMin) * color; \
 		Node* top = (Node*)0; \
 		Node* end = ChildMoves(child, node); \
 		Value value = ValueMin; \
