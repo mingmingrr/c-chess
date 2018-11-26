@@ -32,8 +32,8 @@ flags = [
 	#  '--target=armv7m-ti-none-eabi',
 	'-ferror-limit=10000',
 	'-DNDEBUG',
-	'-std=c++14',
-	'-xc++',
+	'-std=c11',
+	'-xc',
 	#  '-nostdinc',
 	#  '-D__MSP432P401R__',
 	#  '-Dccs',
@@ -43,12 +43,12 @@ flags = [
 	#  '-I/opt/ccstudio/ccsv8/tools/compiler/ti-cgt-arm_18.1.2.LTS/include',
 	#  '-I/home/mingmingrr/Workspace/EEL4930/Lab1',
 	#  '-I/home/mingmingrr/Workspace/EEL4930/Lab1/Source',
-	'-I/home/mingmingrr/Workspace/EEL4930/Lab1/.Template',
+	#  '-I/home/mingmingrr/Workspace/EEL4930/Lab1/.Template',
 	#  '-I/home/mingmingrr/Workspace/EEL4930/Lab1/Lib/BoardSupport',
 	#  '-I/home/mingmingrr/Workspace/EEL4930/Lab1/Lib/CC3100',
 	#  '-I/home/mingmingrr/Workspace/EEL4930/Lib/DriverLib/driverlib/MSP432P4xx',
 	'-I/home/mingmingrr/Workspace/CChess/src'
-	'-I/usr/include',
+	#  '-I/usr/include',
 ]
 
 # Add system includes

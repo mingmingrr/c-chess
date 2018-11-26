@@ -1,8 +1,8 @@
-#pragma once
+#include <chess/value.h>
 
-#include "types.h"
+#include <chess/types.h>
 
-chess_ValueS chess_Posn_value[6][64] = {
+chess_ValueS chess_Square_value[6][64] = {
 	{
 		0   , 0   , 0   , 0  , 0  , 0   , 0   , 0   ,
 		-11 , 7   , 7   , 17 , 17 , 7   , 7   , -11 ,
@@ -59,8 +59,7 @@ chess_ValueS chess_Posn_value[6][64] = {
 	}
 };
 
-chess_Value chess_Piece_value[] = {
-	0,
+chess_ValueL chess_Piece_value[] = {
 	100,
 	320,
 	330,
