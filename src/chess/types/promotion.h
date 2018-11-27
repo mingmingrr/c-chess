@@ -1,6 +1,6 @@
 #pragma once
 
-#include <word.h>
+#include <data/word.h>
 
 #include <chess/types/piece.h>
 

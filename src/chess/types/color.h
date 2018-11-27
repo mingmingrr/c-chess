@@ -1,6 +1,6 @@
 #pragma once
 
-#include <word.h>
+#include <data/word.h>
 
 typedef enum chess_ColorT {
 	chess_Color_White = 1,

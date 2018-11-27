@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <wchar.h>
 
-#include <word.h>
+#include <data/word.h>
 
 #include <chess/util.h>
 #include <chess/types/color.h>

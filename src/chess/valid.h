@@ -1,8 +1,11 @@
 #pragma once
 
-#include <word.h>
+#include <data/word.h>
 
 #include <chess/types.h>
 
-Bool chess_validate(chess_Board* board, chess_Move move);
+Bool chess_valid_move(chess_Board* board, chess_Move move);
+
+Bool chess_valid_getType(chess_Board* board, chess_Move* move);
+
 

@@ -29,7 +29,7 @@ void chess_run() {
 		printf("Move > ");
 		while(true) {
 			move = chess_Move_scan();
-			if(chess_validate(&board, move)) break;
+			if(chess_valid_move(&board, move)) break;
 			printf("Retry > ");
 		}
 		chess_move_do(&board, move, &state);

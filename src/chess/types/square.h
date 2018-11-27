@@ -1,6 +1,6 @@
 #pragma once
 
-#include <word.h>
+#include <data/word.h>
 
 typedef union chess_Square {
 	Uint8 all;
@@ -11,24 +11,25 @@ typedef union chess_Square {
 	};
 } chess_Square;
 
+#define Sq(x) chess_Square_##x
+
 enum {
-	chess_Square_A1, chess_Square_A2, chess_Square_A3, chess_Square_A4,
-	chess_Square_A5, chess_Square_A6, chess_Square_A7, chess_Square_A8,
-	chess_Square_B1, chess_Square_B2, chess_Square_B3, chess_Square_B4,
-	chess_Square_B5, chess_Square_B6, chess_Square_B7, chess_Square_B8,
-	chess_Square_C1, chess_Square_C2, chess_Square_C3, chess_Square_C4,
-	chess_Square_C5, chess_Square_C6, chess_Square_C7, chess_Square_C8,
-	chess_Square_D1, chess_Square_D2, chess_Square_D3, chess_Square_D4,
-	chess_Square_D5, chess_Square_D6, chess_Square_D7, chess_Square_D8,
-	chess_Square_E1, chess_Square_E2, chess_Square_E3, chess_Square_E4,
-	chess_Square_E5, chess_Square_E6, chess_Square_E7, chess_Square_E8,
-	chess_Square_F1, chess_Square_F2, chess_Square_F3, chess_Square_F4,
-	chess_Square_F5, chess_Square_F6, chess_Square_F7, chess_Square_F8,
-	chess_Square_G1, chess_Square_G2, chess_Square_G3, chess_Square_G4,
-	chess_Square_G5, chess_Square_G6, chess_Square_G7, chess_Square_G8,
-	chess_Square_H1, chess_Square_H2, chess_Square_H3, chess_Square_H4,
-	chess_Square_H5, chess_Square_H6, chess_Square_H7, chess_Square_H8,
+Sq(A1), Sq(B1), Sq(C1), Sq(D1), Sq(E1), Sq(F1), Sq(G1), Sq(H1),
+Sq(A2), Sq(B2), Sq(C2), Sq(D2), Sq(E2), Sq(F2), Sq(G2), Sq(H2),
+Sq(A3), Sq(B3), Sq(C3), Sq(D3), Sq(E3), Sq(F3), Sq(G3), Sq(H3),
+Sq(A4), Sq(B4), Sq(C4), Sq(D4), Sq(E4), Sq(F4), Sq(G4), Sq(H4),
+Sq(A5), Sq(B5), Sq(C5), Sq(D5), Sq(E5), Sq(F5), Sq(G5), Sq(H5),
+Sq(A6), Sq(B6), Sq(C6), Sq(D6), Sq(E6), Sq(F6), Sq(G6), Sq(H6),
+Sq(A7), Sq(B7), Sq(C7), Sq(D7), Sq(E7), Sq(F7), Sq(G7), Sq(H7),
+Sq(A8), Sq(B8), Sq(C8), Sq(D8), Sq(E8), Sq(F8), Sq(G8), Sq(H8),
 };
 
-#define chess_Square_make(rank, file) ((rank << 3) | file)
+#undef Sq
 
+#define chess_Square_make(rank, file) (((rank) << 3) | (file))
+
+#define chess_Square_flip(square, color) \
+	(((color) == chess_Color_White) ? \
+		(square) : \
+		((square) ^ (0b111 << 3)) \
+	)

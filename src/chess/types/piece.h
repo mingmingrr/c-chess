@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <wchar.h>
 
-#include <word.h>
+#include <data/word.h>
 
 typedef enum chess_PieceT {
 	chess_Piece_Empty  = 0,

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <word.h>
+#include <data/word.h>
 
 typedef Int8 chess_ValueS;
 

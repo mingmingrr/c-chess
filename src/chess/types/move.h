@@ -1,6 +1,6 @@
 #pragma once
 
-#include <word.h>
+#include <data/word.h>
 
 typedef union chess_Move {
 	Uint16 all;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <word.h>
+#include <data/word.h>
 
 typedef enum chess_CastleT {
 	chess_Castle_White_Short = 1 << 0,

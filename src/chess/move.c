@@ -1,6 +1,7 @@
 #include <chess/move.h>
 
 #include <chess/types.h>
+#include <chess/valid.h>
 #include <chess/util/math.h>
 
 void chess_move_normal(chess_Board* board, chess_Move move) {
